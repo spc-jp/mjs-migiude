@@ -48,7 +48,9 @@
         .header-center {
             flex-grow: 1; text-align: left; display: flex; flex-direction: column; justify-content: center;
             overflow: hidden; /* はみ出し防止 */
+            cursor: pointer; /* クリック可能を示す */
         }
+        .header-center:active { opacity: 0.8; }
 
         .app-catch {
             /* 改善: 文字サイズを上げて視認性向上 */
@@ -315,7 +317,7 @@
 
     <header>
         <img src="rogo.jpg" alt="MJS" id="header-logo-img" class="header-logo" onclick="resetApp()" onerror="this.src='//placehold.co/200x120/white/black?text=LOGO'">
-        <div class="header-center">
+        <div class="header-center" onclick="resetApp()">
             <span class="app-catch">お貸しするのは、マシンではなく『繁盛』</span>
             <span class="app-name">繁盛の右腕</span>
         </div>
@@ -400,16 +402,29 @@
                 <div class="tip-box">
                     <span class="tip-title">🔰 基本：まずはここから！</span>
                     <ul class="tip-list">
-                        <li><strong>🧼 レンズを拭く</strong><br>基本中の基本！撮影前に服でサッと拭くだけで、ボヤけた写真がクリアになります。</li>
-                        <li><strong>📏 「グリッド線」を出す</strong><br>スマホの設定で「グリッド」をONに。水平・垂直を合わせるだけでプロっぽく安定します。</li>
-                        <li><strong>☀️ 自然光が最強</strong><br>店内の照明より、昼間の窓際や自然光が一番キレイに撮れます。</li>
+                        <li><strong>🧼 レンズを拭く</strong><br>撮影前に服でサッと拭くだけで、ボヤけた写真がクリアになります。基本中の基本！</li>
+                        <li><strong>📏 「グリッド線」を出す</strong><br>スマホの設定でグリッドをONに。水平・垂直を合わせるだけで一気にプロっぽくなります。</li>
                     </ul>
                 </div>
                 <div class="tip-box">
-                    <span class="tip-title">🖼 写真：思わずイイネしたくなる</span>
+                    <span class="tip-title">🏠 外観・店内：広さを伝える</span>
                     <ul class="tip-list">
-                        <li><strong>🍹 ドリンクは「逆光」で</strong><br>グラスの後ろから光が当たるように撮ると、液体がキラキラ輝いて美味しそうに見えます。</li>
-                        <li><strong>🍝 料理は「斜め45度」</strong><br>真上からより、食べる人の目線（斜め45度）から寄って撮ると、シズル感（迫力）が出ます。</li>
+                        <li><strong>📱 四隅を意識する</strong><br>部屋の角（コーナー）から撮ると一番広く見えます。スマホを少し高い位置に掲げるのも◎</li>
+                        <li><strong>🚶‍♂️ ドアを開けて撮る</strong><br>入口の写真は「ドアを開けた状態」で。中の雰囲気が少し見えると入店ハードルが下がります。</li>
+                    </ul>
+                </div>
+                <div class="tip-box">
+                    <span class="tip-title">🎯 ダーツ：臨場感を出す</span>
+                    <ul class="tip-list">
+                        <li><strong>🧍‍♂️ 背中越しショット</strong><br>投げている人の斜め後ろから、ターゲット（ボード）も一緒に入れて撮るとカッコイイ！</li>
+                        <li><strong>🎯 刺さった瞬間</strong><br>ボードに刺さったダーツをアップで。背景（お店の賑わい）を少しぼかすと雰囲気が出ます。</li>
+                    </ul>
+                </div>
+                <div class="tip-box">
+                    <span class="tip-title">🍔 料理・ドリンク：シズル感</span>
+                    <ul class="tip-list">
+                        <li><strong>☀️ ドリンクは「逆光」</strong><br>グラスの後ろから光が当たるようにすると、液体がキラキラ輝いて美味しそうに見えます。</li>
+                        <li><strong>🍝 料理は「寄り」で</strong><br>お皿全体を入れなくてOK。一番美味しそうな部分にグッと近づいて撮りましょう。</li>
                     </ul>
                 </div>
             </div>
@@ -1065,7 +1080,34 @@
         function copyText() {
             const text = document.getElementById('sns-result').textContent;
             if (text.includes("（ここに生成")) return;
-            navigator.clipboard.writeText(text).then(() => { showToast("コピーしました！"); });
+
+            // navigator.clipboard.writeText はiframe環境等でブロックされることがあるため
+            // document.execCommand('copy') を使用する方式に変更
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            
+            // 画面外に配置して見えないようにする
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+            document.body.appendChild(textArea);
+            
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast("コピーしました！");
+                } else {
+                    showToast("コピーに失敗しました");
+                }
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                showToast("コピーできませんでした");
+            }
+            
+            document.body.removeChild(textArea);
         }
         function showToast(msg) {
             const toast = document.getElementById("toast");
