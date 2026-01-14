@@ -95,14 +95,17 @@
             align-items: center;
             gap: 12px;
             flex: 1;
-            min-width: 0; /* フレックスアイテムの縮小許可 */
+            min-width: 0;
+            cursor: pointer; /* クリック可能を示す */
+        }
+        .header-brand:active {
+            opacity: 0.7;
         }
 
         .header-logo-img {
             height: 40px;
             width: auto;
             border-radius: 4px;
-            /* 画像がない場合のフォールバック用スタイル */
             background: #fff; 
             object-fit: contain;
         }
@@ -484,7 +487,7 @@
 <body>
 
     <header>
-        <div class="header-brand">
+        <div class="header-brand" onclick="goToTop()">
             <!-- ユーザーがアップロードしたロゴを使用、エラー時はプレースホルダー -->
             <img src="rogo.jpg.jpg" class="header-logo-img" onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' fill=\'%23fff\'%3e%3crect width=\'100\' height=\'100\' fill=\'%23333\'/%3e%3ctext x=\'50\' y=\'50\' font-family=\'Arial\' font-size=\'30\' fill=\'%23fff\' text-anchor=\'middle\' dy=\'.3em\'%3eLOGO%3c/text%3e%3c/svg%3e'">
             <div class="header-titles">
@@ -615,11 +618,11 @@
             <h2 class="section-head"><i class="fa-solid fa-bell-concierge"></i> 接客・チーム</h2>
             
             <div class="info-card">
-                <div class="card-head"><i class="fa-solid fa-scroll"></i> 本日のクエスト</div>
+                <div class="card-head"><i class="fa-solid fa-clipboard-check"></i> 本日のアクション目標</div>
                 <div class="quest-box">
-                    <div class="quest-text" id="quest-text">STARTボタンを押して<br>クエストを受注せよ</div>
+                    <div class="quest-text" id="quest-text">ボタンを押して<br>今日の目標を決めよう</div>
                 </div>
-                <button class="btn-main touch-feedback" onclick="startQuest()">クエストを受注する</button>
+                <button class="btn-main touch-feedback" onclick="startQuest()">やる仕事を決めてスタート</button>
             </div>
 
             <div class="info-card">
@@ -1135,6 +1138,13 @@
             
             if(count === 0) {
                 container.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">該当するヒントはありません</div>';
+            }
+        }
+
+        function goToTop() {
+            const snsBtn = document.querySelector(".nav-btn"); 
+            if (snsBtn) {
+                switchTab('sns', snsBtn);
             }
         }
 
